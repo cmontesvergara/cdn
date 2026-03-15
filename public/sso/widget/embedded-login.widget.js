@@ -38,6 +38,13 @@
         overlay = document.createElement("div");
         overlay.className = "sso-overlay";
 
+        // Cerrar al hacer click fuera del iframe (en el overlay)
+        overlay.addEventListener("click", (event) => {
+            if (event.target === overlay) {
+                close();
+            }
+        });
+
         // Estilos encapsulados para el Shadow DOM
         const style = document.createElement("style");
         style.textContent = `
@@ -108,9 +115,8 @@
             iframe.className = "sso-frame";
 
             // 6️⃣ Carga el iframe pasando parámetros (aquí usarías la URL del SSO Frontend real)
-            // Ejemplo local: http://localhost:4200/sso/login?...
-            const ssoFrontendUrl = "http://localhost:4200/auth/login";
-            iframe.src = `${ssoFrontendUrl}?appId=${config.appId}&theme=${config.theme}&embedded=true`;
+            const ssoFrontendUrl = "https://sso.bigso.co/auth/sign-in";
+            iframe.src = `${ssoFrontendUrl}?appId=${config.appId}&theme=${config.theme}&embedded=true&mode=embedded`;
 
             overlay.appendChild(iframe);
         }
