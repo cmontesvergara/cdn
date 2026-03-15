@@ -4,9 +4,9 @@
 
     const script = document.currentScript;
     const scriptSrc = script ? script.src : "";
-    
+
     // Obtenemos la URL base del CDN dinámicamente
-    const baseUrl = scriptSrc ? new URL(scriptSrc).origin : "https://cdn.msoft.uno";
+    const baseUrl = scriptSrc ? new URL(scriptSrc).origin : "https://cdn.bigso.co";
 
     // 1️⃣ Lee configuración del <script>
     const config = {
@@ -37,7 +37,7 @@
         // 5️⃣ Crea el overlay
         overlay = document.createElement("div");
         overlay.className = "sso-overlay";
-        
+
         // Estilos encapsulados para el Shadow DOM
         const style = document.createElement("style");
         style.textContent = `
@@ -85,11 +85,11 @@
         window.addEventListener("message", (event) => {
             // Validar origen en un entorno real
             // if (event.origin !== "https://app.midominio.com") return;
-            
+
             if (event.data?.type === "close-widget") {
                 close();
             }
-            
+
             if (event.data?.type === "sso-success") {
                 console.log("SSO Autenticado exitosamente", event.data.payload);
                 close();
@@ -106,12 +106,12 @@
         if (!iframe) {
             iframe = document.createElement("iframe");
             iframe.className = "sso-frame";
-            
+
             // 6️⃣ Carga el iframe pasando parámetros (aquí usarías la URL del SSO Frontend real)
             // Ejemplo local: http://localhost:4200/sso/login?...
-            const ssoFrontendUrl = "http://localhost:4200/auth/login"; 
+            const ssoFrontendUrl = "http://localhost:4200/auth/login";
             iframe.src = `${ssoFrontendUrl}?appId=${config.appId}&theme=${config.theme}&embedded=true`;
-            
+
             overlay.appendChild(iframe);
         }
 
@@ -134,7 +134,7 @@
     // pero evitamos cargar el iframe hasta que se llame a open()
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () => {
-             // createOverlay(); // Pre-construir DOM oculto es opcional
+            // createOverlay(); // Pre-construir DOM oculto es opcional
         });
     }
 
