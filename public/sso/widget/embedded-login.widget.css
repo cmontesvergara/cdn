@@ -1,0 +1,23 @@
+/* SSO Iframe Overlay */
+.iframe-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.15s ease;
+}
+
+.iframe-container {
+    background: var(--card-bg, #fff);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    /* Dimension control happens primarily in the iframe tag, 
+       but we ensure the container snugly wraps it here. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
