@@ -136,7 +136,8 @@
             // 6️⃣ Carga el iframe pasando parámetros (aquí usarías la URL del SSO Frontend real)
             //const ssoFrontendUrl = "http://localhost:4200/auth/sign-in";
             const ssoFrontendUrl = "https://sso.bigso.co/auth/sign-in";
-            iframe.src = `${ssoFrontendUrl}?appId=${config.appId}&theme=${config.theme}&embedded=true`;
+            const currentUrl = encodeURIComponent(window.location.href);
+            iframe.src = `${ssoFrontendUrl}?app_id=${config.appId}&theme=${config.theme}&embedded=true&redirect_uri=${currentUrl}`;
 
             overlay.appendChild(iframe);
         }
