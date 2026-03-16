@@ -6,7 +6,7 @@
     const scriptSrc = script ? script.src : "";
 
     // Obtenemos la URL base del CDN dinámicamente
-    const baseUrl = scriptSrc ? new URL(scriptSrc).origin : "https://cdn.bigso.co";
+    const cdnBaseUrl = scriptSrc ? new URL(scriptSrc).origin : "https://cdn.bigso.co";
 
     // 1️⃣ Lee configuración del <script>
     const config = {
@@ -16,10 +16,10 @@
 
     // 3️⃣ Descarga CSS (opcional si usamos Shadow DOM completo, pero lo incluimos por patrón)
     function loadCSS() {
-        if (document.querySelector(`link[href="${baseUrl}/sso/widget/embedded-login.widget.css"]`)) return;
+        if (document.querySelector(`link[href="${cdnBaseUrl}/sso/widget/embedded-login.widget.css"]`)) return;
         const link = document.createElement("link");
         link.rel = "stylesheet";
-        link.href = `${baseUrl}/sso/widget/embedded-login.widget.css`;
+        link.href = `${cdnBaseUrl}/sso/widget/embedded-login.widget.css`;
         document.head.appendChild(link);
     }
 
@@ -88,20 +88,39 @@
         // loadCSS(); // Descomentar si requieres CSS global
         createOverlay();
 
-        // 7️⃣ Comunicación iframe ↔ página
+        // 7️⃣ Comunicación segura iframe ↔ página (Estándar v1.0)
         window.addEventListener("message", (event) => {
-            // Validar origen en un entorno real
-            // if (event.origin !== "https://app.midominio.com") return;
+            // Validar origen en un entorno real. Aquí deberías validar que event.origin 
+            // sea exactamente la URL del SSO configurada.
+            const ssoOrigin = new URL('https://sso.bigso.co').origin;
+            // Para desarrollo local se puede ajustar, pero en prod debe ser estricto
+            if (event.origin !== ssoOrigin && event.origin !== "http://localhost:4200") return;
 
-            if (event.data?.type === "close-widget") {
-                close();
-            }
+            // Validaciones estructurales del estándar
+            const data = event.data;
+            if (!data || typeof data !== "object") return;
+            if (data.v !== "1.0" || data.source !== "@bigso/sso-iframe") return;
 
-            if (event.data?.type === "sso-success") {
-                console.log("SSO Autenticado exitosamente", event.data.payload);
-                close();
-                // Emitir evento para que el cliente (Ordamy, etc.) lo escuche
-                window.dispatchEvent(new CustomEvent('sso-login-success', { detail: event.data.payload }));
+            switch (data.type) {
+                case "sso-close":
+                    close();
+                    break;
+                case "sso-success":
+                    // El SSO pasa el authorization code (base64)
+                    const codeBase64 = data.payload?.codeBase64 || "";
+                    console.log("[SSO Widget] Código de autorización recibido (Base64)");
+
+                    close();
+                    // Emitir evento para que la app satélite consuma su backend (/auth/callback)
+                    window.dispatchEvent(new CustomEvent('sso-login-success', {
+                        detail: {
+                            codeBase64: codeBase64
+                        }
+                    }));
+                    break;
+                case "sso-ready":
+                    console.log("[SSO Widget] Iframe cargado y listo");
+                    break;
             }
         });
     }
