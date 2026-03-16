@@ -83,9 +83,6 @@
                     height: 100%;
                     border-radius: 0;
                 }
-                .sso-close-btn {
-                    display: flex;
-                }
             }
             .sso-close-btn {
                 position: absolute;
@@ -100,7 +97,7 @@
                 font-size: 24px;
                 line-height: 1;
                 cursor: pointer;
-                display: none;
+                display: flex;
                 align-items: center;
                 justify-content: center;
                 z-index: 1000000;
@@ -109,8 +106,16 @@
             .sso-close-btn:hover {
                 background: rgba(0, 0, 0, 0.8);
             }
+            .sso-overlay.sso-closing {
+                animation: fadeOut 0.2s ease forwards;
+            }
+            .sso-overlay.sso-closing .sso-frame {
+                animation: slideDown 0.2s ease forwards;
+            }
             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
             @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+            @keyframes slideDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(20px); opacity: 0; } }
         `;
 
         shadow.appendChild(style);
@@ -185,8 +190,14 @@
     }
 
     function close() {
-        if (overlay) {
-            overlay.style.display = "none";
+        if (overlay && overlay.style.display !== "none") {
+            overlay.classList.add("sso-closing");
+            
+            // Esperamos a que la animación de fadeOut termine (200ms)
+            setTimeout(() => {
+                overlay.style.display = "none";
+                overlay.classList.remove("sso-closing");
+            }, 200);
         }
     }
 
