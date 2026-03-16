@@ -60,8 +60,8 @@
                 animation: fadeIn 0.2s ease;
             }
             .sso-frame {
-                width: 420px;
-                height: 640px;
+                width: 370px;
+                height: 350px;
                 border: none;
                 border-radius: 16px;
                 background: var(--card-bg, #fff);
@@ -115,8 +115,9 @@
             iframe.className = "sso-frame";
 
             // 6️⃣ Carga el iframe pasando parámetros (aquí usarías la URL del SSO Frontend real)
-            const ssoFrontendUrl = "https://sso.bigso.co/auth/sign-in";
-            iframe.src = `${ssoFrontendUrl}?appId=${config.appId}&theme=${config.theme}&embedded=true&mode=embedded`;
+            const ssoFrontendUrl = "http://localhost:4200/auth/sign-in";
+            //const ssoFrontendUrl = "https://sso.bigso.co/auth/sign-in";
+            iframe.src = `${ssoFrontendUrl}?appId=${config.appId}&theme=${config.theme}&embedded=true`;
 
             overlay.appendChild(iframe);
         }
