@@ -39,6 +39,14 @@
         overlay = document.createElement("div");
         overlay.className = "sso-overlay";
 
+        // Botón de cerrar visible al cubrir la pantalla
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "sso-close-btn";
+        closeBtn.innerHTML = "&times;";
+        closeBtn.setAttribute("aria-label", "Cerrar modal");
+        closeBtn.addEventListener("click", () => close());
+        overlay.appendChild(closeBtn);
+
         // Cerrar al hacer click fuera del iframe (en el overlay)
         overlay.addEventListener("click", (event) => {
             if (event.target === overlay) {
@@ -69,12 +77,37 @@
                 box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
                 animation: slideUp 0.3s ease;
             }
-            @media (max-width: 480px) {
+            @media (max-width: 480px), (max-height: 480px) {
                 .sso-frame {
                     width: 100%;
                     height: 100%;
                     border-radius: 0;
                 }
+                .sso-close-btn {
+                    display: flex;
+                }
+            }
+            .sso-close-btn {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                width: 32px;
+                height: 32px;
+                background: rgba(0, 0, 0, 0.4);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                font-size: 24px;
+                line-height: 1;
+                cursor: pointer;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000000;
+                transition: background 0.2s;
+            }
+            .sso-close-btn:hover {
+                background: rgba(0, 0, 0, 0.8);
             }
             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
             @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
