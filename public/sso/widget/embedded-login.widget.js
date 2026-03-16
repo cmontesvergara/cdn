@@ -11,7 +11,8 @@
     // 1️⃣ Lee configuración del <script>
     const config = {
         appId: script?.dataset.appId || "",
-        theme: script?.dataset.theme || "light"
+        theme: script?.dataset.theme || "light",
+        callbackUrl: script?.dataset.callbackUrl || "/auth/callback"
     };
 
     // 3️⃣ Descarga CSS (opcional si usamos Shadow DOM completo, pero lo incluimos por patrón)
@@ -109,14 +110,19 @@
                     // El SSO pasa el authorization code (base64)
                     const codeBase64 = data.payload?.codeBase64 || "";
                     console.log("[SSO Widget] Código de autorización recibido (Base64)");
+                    
+                    if (codeBase64) {
+                        try {
+                            const authCode = atob(codeBase64);
+                            const callbackPath = config.callbackUrl || "/auth/callback";
+                            console.log(`[SSO Widget] Redirigiendo a callback interno con code: ${authCode}`);
+                            window.location.href = `${callbackPath}?code=${authCode}`;
+                        } catch (e) {
+                            console.error("[SSO Widget] Error decodificando el authorization code", e);
+                        }
+                    }
 
                     close();
-                    // Emitir evento para que la app satélite consuma su backend (/auth/callback)
-                    window.dispatchEvent(new CustomEvent('sso-login-success', {
-                        detail: {
-                            codeBase64: codeBase64
-                        }
-                    }));
                     break;
                 case "sso-ready":
                     console.log("[SSO Widget] Iframe cargado y listo");
